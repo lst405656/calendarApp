@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '../base/button'
 import { cn } from '../../lib/utils'
-import { getDaysInMonth, getFirstDayOfMonth, getDayName } from '../../lib/date-utils'
+import { getDaysInMonth, getFirstDayOfMonth } from '../../lib/date-utils'
 
 interface MiniCalendarProps {
     currentDate: Date

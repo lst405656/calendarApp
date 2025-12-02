@@ -30,7 +30,8 @@ export function DialogTrigger({ children, asChild }: { children: React.ReactNode
     }
 
     if (asChild && React.isValidElement(children)) {
-        return React.cloneElement(children as React.ReactElement, { onClick: handleClick })
+        const child = children as React.ReactElement<{ onClick?: React.MouseEventHandler }>
+        return React.cloneElement(child, { onClick: handleClick })
     }
 
     return <button onClick={handleClick}>{children}</button>

@@ -6,11 +6,7 @@ const dbPath = join(app.getPath('userData'), 'calendar-app.db');
 const db = new Database(dbPath);
 
 export function initDB() {
-  // 기존 테이블 삭제 (개발 중이므로 데이터 초기화)
-  db.exec(`DROP TABLE IF EXISTS events`);
-  db.exec(`DROP TABLE IF EXISTS transactions`);
-  
-  // 캘린더 이벤트 테이블
+  // Create tables if they do not exist (preserve existing data)
   db.exec(`
     CREATE TABLE IF NOT EXISTS events (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -22,7 +18,6 @@ export function initDB() {
     )
   `);
 
-  // 가계부 내역 테이블
   db.exec(`
     CREATE TABLE IF NOT EXISTS transactions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
