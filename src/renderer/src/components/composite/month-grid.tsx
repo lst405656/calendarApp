@@ -209,18 +209,13 @@ export function MonthGrid({ year, month, events, transactions, selectedDate, onD
                                 // Let's try to render what we have, and maybe limit visual height
 
                                 for (let i = 0; i <= maxRow; i++) {
-                                    const event = weekEvents.find(e => eventRows[e.id] === i)
-                                    if (event) {
-                                        const start = extractDatePart(event.start_date)
-                                        const end = extractDatePart(event.end_date)
-                                        if (dateStr >= start && dateStr <= end) {
-                                            eventsToRender[i] = event
-                                        } else {
-                                            eventsToRender[i] = null
-                                        }
-                                    } else {
-                                        eventsToRender[i] = null
-                                    }
+                                    const eventForRow = weekEvents.find(e => {
+                                        if (eventRows[e.id] !== i) return false
+                                        const start = extractDatePart(e.start_date)
+                                        const end = extractDatePart(e.end_date)
+                                        return dateStr >= start && dateStr <= end
+                                    })
+                                    eventsToRender[i] = eventForRow ?? null
                                 }
 
                                 return (
