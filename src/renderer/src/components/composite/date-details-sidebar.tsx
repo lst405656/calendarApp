@@ -85,14 +85,14 @@ export function DateDetailsSidebar({
             {/* Events Section */}
             <Div className="mb-6">
                 <Div className="flex items-center justify-between mb-3">
-                    <Typography as="h4" className="font-semibold text-gray-800">이벤트</Typography>
+                    <Typography as="h4" className="font-semibold text-gray-800">일정</Typography>
                     <Button size="sm" onClick={onAddEvent}>
                         <Plus className="w-4 h-4 mr-1" />
                         추가
                     </Button>
                 </Div>
                 {events.length === 0 ? (
-                    <Typography as="p" className="text-sm text-gray-500 italic">이벤트 없음</Typography>
+                    <Typography as="p" className="text-sm text-gray-500 italic">일정 없음</Typography>
                 ) : (
                     <Div className="space-y-2">
                         {events.map(event => (

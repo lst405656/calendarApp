@@ -148,8 +148,8 @@ export function SettingsPage() {
                 {/* Event Color Settings */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>이벤트 색상 관리</CardTitle>
-                        <CardDescription>이벤트에 사용할 수 있는 색상을 관리합니다.</CardDescription>
+                        <CardTitle>일정 색상 관리</CardTitle>
+                        <CardDescription>일정에 사용할 수 있는 색상을 관리합니다.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="flex gap-2 items-center">

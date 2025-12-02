@@ -79,7 +79,7 @@ export function EventFormDialog({
             <DialogContent>
                 <form onSubmit={handleSubmit}>
                     <DialogHeader>
-                        <DialogTitle>{event ? '이벤트 수정' : '새 이벤트 추가'}</DialogTitle>
+                        <DialogTitle>{event ? '일정 수정' : '새 일정 추가'}</DialogTitle>
                     </DialogHeader>
 
                     <div className="space-y-4 py-4">
@@ -89,7 +89,7 @@ export function EventFormDialog({
                                 id="title"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                placeholder="이벤트 제목을 입력하세요"
+                                placeholder="일정 제목을 입력하세요"
                                 required
                             />
                         </div>
@@ -141,7 +141,7 @@ export function EventFormDialog({
                                 id="description"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
-                                placeholder="이벤트에 대한 설명을 입력하세요"
+                                placeholder="일정에 대한 설명을 입력하세요"
                                 rows={3}
                             />
                         </div>

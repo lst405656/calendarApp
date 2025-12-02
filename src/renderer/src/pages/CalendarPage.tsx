@@ -104,13 +104,13 @@ export function CalendarPage() {
     }
 
     const handleDeleteEvent = async (id: number) => {
-        if (confirm('이 이벤트를 삭제하시겠습니까?')) {
+        if (confirm('이 일정를 삭제하시겠습니까?')) {
             try {
                 await window.api.deleteEvent(id)
                 fetchData()
             } catch (error) {
                 console.error('Failed to delete event:', error)
-                alert('이벤트 삭제에 실패했습니다.')
+                alert('일정 삭제에 실패했습니다.')
             }
         }
     }
@@ -125,7 +125,7 @@ export function CalendarPage() {
             fetchData()
         } catch (error) {
             console.error('Failed to save event:', error)
-            alert('이벤트 저장에 실패했습니다.')
+            alert('일정 저장에 실패했습니다.')
         }
     }
 
@@ -177,10 +177,10 @@ export function CalendarPage() {
             const dateStr = getLocalDateString(today)
 
             await window.api.addEvent({
-                title: '테스트 이벤트',
+                title: '테스트 일정',
                 start_date: dateStr,
                 end_date: dateStr,
-                description: '오늘의 테스트 이벤트입니다',
+                description: '오늘의 테스트 일정입니다',
                 color: '#3b82f6'
             })
 
@@ -247,7 +247,7 @@ export function CalendarPage() {
                 <div className="flex gap-2">
                     <Button variant="outline" onClick={goToToday}>오늘</Button>
                     <Button variant="outline" onClick={addTestData}>테스트 데이터 추가</Button>
-                    <Button onClick={handleAddEvent}>새 이벤트 추가</Button>
+                    <Button onClick={handleAddEvent}>새 일정 추가</Button>
                 </div>
             </header>
 
