@@ -1,0 +1,90 @@
+name: Build & Release (Win/Mac/Linux)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '기본 버전 (예: v1.2.3)'
+        required: true
+
+jobs:
+  build-release-win:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build Windows
+        run: npm run build:win
+
+      # dist 경로/파일 패턴은 프로젝트에 맞게 수정
+      - name: Create Windows Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.version }}-win
+          name: ${{ github.event.inputs.version }} - Windows
+          files: |
+            dist\*.exe
+            dist\*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-release-mac:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build macOS
+        run: npm run build:mac
+
+      - name: Create macOS Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.version }}-mac
+          name: ${{ github.event.inputs.version }} - macOS
+          files: |
+            dist/*.dmg
+            dist/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-release-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build Linux
+        run: npm run build:linux
+
+      - name: Create Linux Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.version }}-linux
+          name: ${{ github.event.inputs.version }} - Linux
+          files: |
+            dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
