@@ -277,7 +277,7 @@ export function CalendarPage() {
                                     className="w-1 bg-gray-200 hover:bg-blue-500 cursor-col-resize transition-colors"
                                     onMouseDown={() => setIsResizing(true)}
                                 />
-                                <div style={{ width: `${sidebarWidth} px` }} className="overflow-auto">
+                                <div style={{ width: `${sidebarWidth}px` }} className="overflow-auto">
                                     <DateDetailsSidebar
                                         date={selectedDate}
                                         events={selectedEvents}

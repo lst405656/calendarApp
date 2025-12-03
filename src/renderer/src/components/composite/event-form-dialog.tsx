@@ -42,6 +42,7 @@ export function EventFormDialog({
     const [endDate, setEndDate] = useState(event?.end_date || defaultDate || getLocalDateString())
     const [description, setDescription] = useState(event?.description || '')
     const [color, setColor] = useState(event?.color || '#3b82f6')
+    const [customColor, setCustomColor] = useState('')
 
     useEffect(() => {
         if (event) {
@@ -50,12 +51,14 @@ export function EventFormDialog({
             setEndDate(event.end_date)
             setDescription(event.description || '')
             setColor(event.color || '#3b82f6')
+            setCustomColor(event.color || '')
         } else {
             setTitle('')
             setStartDate(defaultDate || getLocalDateString())
             setEndDate(defaultDate || getLocalDateString())
             setDescription('')
             setColor('#3b82f6')
+            setCustomColor('')
         }
     }, [event, defaultDate, open])
 
@@ -120,7 +123,7 @@ export function EventFormDialog({
 
                         <div>
                             <Label htmlFor="color">색상</Label>
-                            <div className="flex gap-2 mt-2">
+                            <div className="flex gap-2 mt-2 flex-wrap">
                                 {COLORS.map(c => (
                                     <button
                                         key={c.value}
@@ -132,6 +135,32 @@ export function EventFormDialog({
                                         title={c.label}
                                     />
                                 ))}
+                                <div className="flex items-center gap-2 mt-2 w-full">
+                                    <Input
+                                        type="color"
+                                        aria-label="Custom color picker"
+                                        value={/^#([0-9a-fA-F]{6})$/.test(customColor) ? customColor : color}
+                                        onChange={(e) => {
+                                            setColor(e.target.value)
+                                            setCustomColor(e.target.value)
+                                        }}
+                                        className="w-12 p-1 h-10"
+                                    />
+                                    <Input
+                                        aria-label="Custom color hex"
+                                        placeholder="#000000"
+                                        value={customColor}
+                                        onChange={(e) => {
+                                            const val = e.target.value
+                                            setCustomColor(val)
+                                            if (/^#([0-9a-fA-F]{6})$/.test(val)) {
+                                                setColor(val)
+                                            }
+                                        }}
+                                        className="flex-1"
+                                    />
+                                    <span className="text-xs text-gray-500 whitespace-nowrap">#RRGGBB 입력</span>
+                                </div>
                             </div>
                         </div>
 

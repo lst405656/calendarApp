@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Disable accidental drag in the app while keeping form controls selectable */
+body {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+input, textarea, button, select {
+  user-select: text;
+  -webkit-user-drag: none;
+}

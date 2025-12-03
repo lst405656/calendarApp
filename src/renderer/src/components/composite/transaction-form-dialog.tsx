@@ -8,6 +8,18 @@ import { Select } from '../base/select'
 import { getLocalDateString } from '../../lib/date-utils'
 import { useCategories } from '../../hooks/use-categories'
 
+const formatKoreanAmount = (value: string) => {
+    const num = parseInt(value, 10)
+    if (isNaN(num) || num === 0) return '0원'
+
+    const man = Math.floor(num / 10000)
+    const chun = Math.floor((num % 10000) / 1000)
+
+    if (man > 0 && chun > 0) return `${man}만원 ${chun}천원`
+    if (man > 0) return `${man}만원`
+    return `${chun}천원`
+}
+
 interface TransactionFormDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
@@ -53,12 +65,18 @@ export function TransactionFormDialog({
         }
     }, [transaction, defaultDate, open])
 
+    const normalizeAmount = (val: string) => {
+        const num = Math.max(0, parseInt(val || '0', 10) || 0)
+        if (num === 0) return 0
+        return Math.ceil(num / 10000) * 10000
+    }
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
 
         const transactionData = {
             date,
-            amount: parseFloat(amount),
+            amount: normalizeAmount(amount),
             type,
             category,
             description: description || undefined
@@ -99,14 +117,23 @@ export function TransactionFormDialog({
                             <Label htmlFor="amount">금액</Label>
                             <Input
                                 id="amount"
-                                type="number"
+                                type="text"
+                                inputMode="numeric"
                                 value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
+                                onChange={(e) => {
+                                    const raw = e.target.value.replace(/[^0-9]/g, '')
+                                    setAmount(raw)
+                                }}
+                                onBlur={(e) => {
+                                    const normalized = normalizeAmount(e.target.value)
+                                    setAmount(normalized.toString())
+                                }}
                                 placeholder="금액을 입력하세요"
                                 required
-                                min="0"
-                                step="1"
                             />
+                            <div className="text-xs text-gray-500 mt-1">
+                                {formatKoreanAmount(amount)}
+                            </div>
                         </div>
 
                         <div>
