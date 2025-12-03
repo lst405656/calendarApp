@@ -25,6 +25,7 @@
     "@electron-toolkit/utils": "^4.0.0",
     "better-sqlite3": "^12.4.6",
     "clsx": "^2.1.1",
+    "electron-updater": "^6.6.2",
     "lucide-react": "^0.555.0",
     "react-router-dom": "^7.9.6",
     "tailwind-merge": "^3.4.0"
