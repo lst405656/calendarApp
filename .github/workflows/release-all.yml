@@ -7,6 +7,10 @@ on:
         description: '기본 버전 (예: v1.2.3)'
         required: true
 
+# 🔑 릴리즈 생성/수정 권한 부여 (403 방지)
+permissions:
+  contents: write
+
 jobs:
   build-release-win:
     runs-on: windows-latest
@@ -24,15 +28,20 @@ jobs:
       - name: Build Windows
         run: npm run build:win
 
-      # dist 경로/파일 패턴은 프로젝트에 맞게 수정
+      # (선택) dist 안에 뭐 나오는지 보고 싶으면 켜두기
+      # - name: Check dist contents
+      #   run: |
+      #     echo "=== dist ==="
+      #     dir dist
+
       - name: Create Windows Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.version }}-win
           name: ${{ github.event.inputs.version }} - Windows
           files: |
-            dist\*.exe
-            dist\*.zip
+            dist/**/*.exe
+            dist/**/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -52,14 +61,19 @@ jobs:
       - name: Build macOS
         run: npm run build:mac
 
+      # - name: Check dist contents
+      #   run: |
+      #     echo "=== dist ==="
+      #     ls -R dist
+
       - name: Create macOS Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.version }}-mac
           name: ${{ github.event.inputs.version }} - macOS
           files: |
-            dist/*.dmg
-            dist/*.zip
+            dist/**/*.dmg
+            dist/**/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -79,12 +93,17 @@ jobs:
       - name: Build Linux
         run: npm run build:linux
 
+      # - name: Check dist contents
+      #   run: |
+      #     echo "=== dist ==="
+      #     ls -R dist
+
       - name: Create Linux Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.version }}-linux
           name: ${{ github.event.inputs.version }} - Linux
           files: |
-            dist/*
+            dist/**
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
