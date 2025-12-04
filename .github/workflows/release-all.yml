@@ -12,78 +12,51 @@ permissions:
   contents: write
 
 jobs:
-  build-release-win:
-    runs-on: windows-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install deps
-        run: npm ci
-
-      - name: Build Windows
-        run: npm run build:win
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # (선택) dist 안에 뭐 나오는지 보고 싶으면 켜두기
-      - name: Check dist contents
-        run: |
-          echo "=== dist ==="
-          dir dist
-
-      - name: Create Windows Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.event.inputs.version }}-win
-          name: ${{ github.event.inputs.version }} - Windows
-          files: |
-            dist/**/*.exe
-            dist/**/*.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  build-release-mac:
-    runs-on: macos-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install deps
-        run: npm ci
-
-      - name: Build macOS
-        run: npm run build:mac
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Check dist contents
-        run: |
-          echo "=== dist ==="
-          ls -R dist
-
-      - name: Create macOS Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.event.inputs.version }}-mac
-          name: ${{ github.event.inputs.version }} - macOS
-          files: |
-            dist/**/*.dmg
-            dist/**/*.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  build-release-linux:
+  ensure-release:
     runs-on: ubuntu-latest
+    steps:
+      - name: Ensure release exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          if gh release view "$VERSION" >/dev/null 2>&1; then
+            echo "Release already exists. Marking as latest."
+            gh release edit "$VERSION" --latest
+          else
+            echo "Creating release $VERSION"
+            gh release create "$VERSION" --title "$VERSION" --latest --notes "Automated multi-OS release."
+          fi
 
+  build-and-upload:
+    needs: ensure-release
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            build: npm run build:win
+            list: |
+              echo "=== dist ==="
+              dir dist
+            files: |
+              dist/**/*.exe
+              dist/**/*.zip
+          - os: macos-latest
+            build: npm run build:mac
+            list: |
+              echo "=== dist ==="
+              ls -R dist
+            files: |
+              dist/**/*.dmg
+              dist/**/*.zip
+          - os: ubuntu-latest
+            build: npm run build:linux
+            list: |
+              echo "=== dist ==="
+              ls -R dist
+            files: |
+              dist/**
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
 
@@ -94,22 +67,20 @@ jobs:
       - name: Install deps
         run: npm ci
 
-      - name: Build Linux
-        run: npm run build:linux
+      - name: Build
+        run: ${{ matrix.build }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check dist contents
-        run: |
-           echo "=== dist ==="
-           ls -R dist
+        run: ${{ matrix.list }}
 
-      - name: Create Linux Release
+      - name: Upload assets to unified release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.event.inputs.version }}-linux
-          name: ${{ github.event.inputs.version }} - Linux
-          files: |
-            dist/**
+          tag_name: ${{ github.event.inputs.version }}
+          name: ${{ github.event.inputs.version }}
+          make_latest: true
+          files: ${{ matrix.files }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
