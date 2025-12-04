@@ -27,12 +27,14 @@ jobs:
 
       - name: Build Windows
         run: npm run build:win
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # (선택) dist 안에 뭐 나오는지 보고 싶으면 켜두기
-      # - name: Check dist contents
-      #   run: |
-      #     echo "=== dist ==="
-      #     dir dist
+      - name: Check dist contents
+        run: |
+          echo "=== dist ==="
+          dir dist
 
       - name: Create Windows Release
         uses: softprops/action-gh-release@v2
@@ -60,11 +62,13 @@ jobs:
 
       - name: Build macOS
         run: npm run build:mac
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Check dist contents
-      #   run: |
-      #     echo "=== dist ==="
-      #     ls -R dist
+      - name: Check dist contents
+        run: |
+          echo "=== dist ==="
+          ls -R dist
 
       - name: Create macOS Release
         uses: softprops/action-gh-release@v2
@@ -92,11 +96,13 @@ jobs:
 
       - name: Build Linux
         run: npm run build:linux
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Check dist contents
-      #   run: |
-      #     echo "=== dist ==="
-      #     ls -R dist
+      - name: Check dist contents
+        run: |
+           echo "=== dist ==="
+           ls -R dist
 
       - name: Create Linux Release
         uses: softprops/action-gh-release@v2
