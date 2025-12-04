@@ -20,8 +20,18 @@ export function isSameDay(date1: Date, date2: Date): boolean {
 
 export function getMonthName(month: number): string {
   const months = [
-    '1월', '2월', '3월', '4월', '5월', '6월',
-    '7월', '8월', '9월', '10월', '11월', '12월'
+    '1월',
+    '2월',
+    '3월',
+    '4월',
+    '5월',
+    '6월',
+    '7월',
+    '8월',
+    '9월',
+    '10월',
+    '11월',
+    '12월'
   ]
   return months[month]
 }
@@ -34,7 +44,7 @@ export function getDayName(day: number): string {
 export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('ko-KR', {
     style: 'currency',
-    currency: 'KRW',
+    currency: 'KRW'
   }).format(amount)
 }
 

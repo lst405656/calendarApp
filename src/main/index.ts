@@ -81,8 +81,18 @@ app.whenReady().then(() => {
     return db.deleteTransaction(id)
   })
 
-  createWindow()
+  // Dashboard statistics handlers
+  ipcMain.handle('get-monthly-stats', (_, year: number, month: number) => {
+    return db.getMonthlyStats(year, month)
+  })
+  ipcMain.handle('get-daily-transactions', (_, year: number, month: number) => {
+    return db.getDailyTransactions(year, month)
+  })
+  ipcMain.handle('get-recent-transactions', (_, limit?: number) => {
+    return db.getRecentTransactions(limit)
+  })
 
+  createWindow()
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
