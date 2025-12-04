@@ -41,6 +41,8 @@ jobs:
               echo "=== dist ==="
               dir dist
             files: |
+              dist/latest.yml
+              dist/**/*.blockmap
               dist/**/*.exe
               dist/**/*.zip
           - os: macos-latest
@@ -49,6 +51,8 @@ jobs:
               echo "=== dist ==="
               ls -R dist
             files: |
+              dist/latest-mac.yml
+              dist/**/*.blockmap
               dist/**/*.dmg
               dist/**/*.zip
           - os: ubuntu-latest
@@ -57,7 +61,10 @@ jobs:
               echo "=== dist ==="
               ls -R dist
             files: |
-              dist/**
+              dist/latest-linux.yml
+              dist/**/*.blockmap
+              dist/**/*.AppImage
+              dist/**/*.deb
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4

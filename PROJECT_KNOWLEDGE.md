@@ -49,6 +49,8 @@
 - **Auto-Update**:
   - Source: GitHub Releases (`lst405656/calendarApp`).
   - Mechanism: `electron-updater` checks on production launch, shows a confirmation dialog with the current/release versions, downloads only when the user agrees, then asks to restart once the update is ready.
+- **Release Workflow**:
+  - `.github/workflows/release-all.yml`: Single version dispatch builds Win/macOS/Linux in parallel, uploads installers plus `latest*.yml` files to one GitHub release (Windows nsis+portable, macOS dmg, Linux AppImage only).
 
 ## 4. Project Structure
 
@@ -75,3 +77,4 @@
 - **GitHub Publish**: `electron-builder.yml` configured to publish releases to `lst405656/calendarApp`.
 - **Dual Build**: Windows build target set to generate both `nsis` (for updates) and `portable` (for portability).
 - **Interactive Auto-Update**: `src/main/index.ts` now wires `electron-updater` to compare the running version with the latest GitHub release per OS, prompt the user before download, and restart the app after the update is fetched.
+- **Linux Packaging Trimmed**: `electron-builder.yml` now outputs only the AppImage format (along with `latest-linux.yml`) to keep releases minimal.
