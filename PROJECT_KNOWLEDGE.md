@@ -48,7 +48,7 @@
   - `portable`: Single executable file (data stored locally).
 - **Auto-Update**:
   - Source: GitHub Releases (`lst405656/calendarApp`).
-  - Mechanism: Checks for updates on app launch (in production).
+  - Mechanism: `electron-updater` checks on production launch, shows a confirmation dialog with the current/release versions, downloads only when the user agrees, then asks to restart once the update is ready.
 
 ## 4. Project Structure
 
@@ -74,3 +74,4 @@
 - **Portable Data**: `src/main/index.ts` modified to set `userData` path to `./data` relative to the executable in production mode.
 - **GitHub Publish**: `electron-builder.yml` configured to publish releases to `lst405656/calendarApp`.
 - **Dual Build**: Windows build target set to generate both `nsis` (for updates) and `portable` (for portability).
+- **Interactive Auto-Update**: `src/main/index.ts` now wires `electron-updater` to compare the running version with the latest GitHub release per OS, prompt the user before download, and restart the app after the update is fetched.

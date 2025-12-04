@@ -1,6 +1,7 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { autoUpdater } from 'electron-updater'
 import icon from '../../resources/icon.png?asset'
 
 function createWindow(): void {
@@ -39,6 +40,53 @@ function createWindow(): void {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 import * as db from './db'
+
+function setupAutoUpdates(): void {
+  if (!app.isPackaged) {
+    return
+  }
+
+  autoUpdater.autoDownload = false
+
+  autoUpdater.on('error', (error) => {
+    dialog.showErrorBox('업데이트 오류', error?.message ?? '업데이트 중 오류가 발생했습니다.')
+  })
+
+  autoUpdater.on('update-available', async (info) => {
+    const currentVersion = app.getVersion()
+    const result = await dialog.showMessageBox({
+      type: 'info',
+      title: '업데이트 확인',
+      message: `새 버전 ${info.version}이(가) 있습니다. (현재 버전: ${currentVersion})\n업데이트를 진행할까요?`,
+      buttons: ['업데이트', '취소'],
+      defaultId: 0,
+      cancelId: 1
+    })
+
+    if (result.response === 0) {
+      autoUpdater.downloadUpdate()
+    }
+  })
+
+  autoUpdater.on('update-downloaded', async () => {
+    const result = await dialog.showMessageBox({
+      type: 'question',
+      title: '업데이트 다운로드 완료',
+      message: '업데이트를 설치하려면 앱을 재시작해야 합니다. 지금 재시작할까요?',
+      buttons: ['지금 재시작', '나중에'],
+      defaultId: 0,
+      cancelId: 1
+    })
+
+    if (result.response === 0) {
+      autoUpdater.quitAndInstall()
+    }
+  })
+
+  void autoUpdater.checkForUpdates().catch((error) => {
+    dialog.showErrorBox('업데이트 확인 실패', error?.message ?? '업데이트 서버에 연결할 수 없습니다.')
+  })
+}
 
 app.whenReady().then(() => {
   // Set app user model id for windows
@@ -93,6 +141,7 @@ app.whenReady().then(() => {
   })
 
   createWindow()
+  setupAutoUpdates()
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
