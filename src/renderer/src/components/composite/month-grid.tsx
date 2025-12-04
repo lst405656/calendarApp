@@ -35,6 +35,7 @@ interface MonthGridProps {
   transactions: Transaction[]
   selectedDate?: Date
   onDateClick?: (date: Date) => void
+  holidays?: Record<string, string>
 }
 
 export function MonthGrid({
@@ -43,7 +44,8 @@ export function MonthGrid({
   events,
   transactions,
   selectedDate,
-  onDateClick
+  onDateClick,
+  holidays = {}
 }: MonthGridProps) {
   const daysInMonth = getDaysInMonth(year, month)
   const firstDay = getFirstDayOfMonth(year, month)
@@ -182,13 +184,17 @@ export function MonthGrid({
     <Div className="bg-white rounded-xl border border-gray-200 flex flex-col h-full">
       {/* Header with day names */}
       <Div className="grid grid-cols-7 border-b border-gray-200 flex-none">
-        {[0, 1, 2, 3, 4, 5, 6].map((day) => (
-          <Div key={day} className="p-3 text-center border-r border-gray-100 last:border-r-0">
-            <Typography as="span" className="text-sm font-semibold text-gray-600">
-              {getDayName(day)}
-            </Typography>
-          </Div>
-        ))}
+        {[0, 1, 2, 3, 4, 5, 6].map((day) => {
+          const headerColor =
+            day === 0 ? 'text-red-500' : day === 6 ? 'text-blue-600' : 'text-gray-600'
+          return (
+            <Div key={day} className="p-3 text-center border-r border-gray-100 last:border-r-0">
+              <Typography as="span" className={cn('text-sm font-semibold', headerColor)}>
+                {getDayName(day)}
+              </Typography>
+            </Div>
+          )
+        })}
       </Div>
 
       {/* Calendar grid */}
@@ -217,6 +223,15 @@ export function MonthGrid({
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
                 const selected = isSelected(day)
                 const today = isToday(day)
+                const weekday = new Date(year, month, day).getDay()
+                const holidayName = holidays[dateStr]
+                const isHoliday = Boolean(holidayName)
+                const weekendColor =
+                  isHoliday || weekday === 0
+                    ? 'text-red-600'
+                    : weekday === 6
+                      ? 'text-blue-600'
+                      : 'text-gray-700'
 
                 // Prepare events for this day based on calculated rows
                 const eventsToRender: (CalendarEvent | null)[] = []
@@ -245,17 +260,26 @@ export function MonthGrid({
                   >
                     {/* Date Header & Financial Summary */}
                     <Div className="flex items-start justify-between px-2 pt-2 mb-1 h-[28px]">
-                      <Typography
-                        as="div"
-                        className={cn(
-                          'text-sm font-semibold w-6 h-6 flex items-center justify-center rounded-full',
-                          today && 'bg-blue-600 text-white',
-                          !today && 'text-gray-700',
-                          selected && !today && 'bg-blue-200 text-blue-800'
+                      <Div className="flex flex-col items-start gap-0.5">
+                        <Typography
+                          as="div"
+                          className={cn(
+                            'text-sm font-semibold w-6 h-6 flex items-center justify-center rounded-full',
+                            today && 'bg-blue-600 text-white',
+                            !today && weekendColor,
+                            selected && !today && 'bg-blue-200',
+                            selected && !today && isHoliday && 'text-red-600',
+                            selected && !today && weekday === 6 && !isHoliday && 'text-blue-600'
+                          )}
+                        >
+                          {day}
+                        </Typography>
+                        {holidayName && (
+                          <Typography as="span" className="text-[10px] text-red-500 font-medium">
+                            {holidayName}
+                          </Typography>
                         )}
-                      >
-                        {day}
-                      </Typography>
+                      </Div>
 
                       <Div className="flex flex-col items-end text-[10px] leading-tight">
                         {income > 0 && (

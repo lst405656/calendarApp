@@ -22,6 +22,7 @@
 - **Functionality**: Create, read, update, and delete events.
 - **Data**: Title, Start Date, End Date, Description, Color.
 - **View**: Monthly calendar view.
+- **Visual cues**: Sundays/공휴일은 빨간색, 토요일은 파란색으로 날짜를 표시하고 공휴일 명칭을 달력 셀 상단에 보여줍니다. 공휴일 정보는 `https://date.nager.at/api/v3/PublicHolidays/{year}/KR` (또는 `VITE_HOLIDAY_API_URL`/`VITE_HOLIDAY_COUNTRY`)에서 가져옵니다.
 
 ### B. Ledger (Household Account Book)
 
@@ -78,3 +79,4 @@
 - **Dual Build**: Windows build target set to generate both `nsis` (for updates) and `portable` (for portability).
 - **Interactive Auto-Update**: `src/main/index.ts` now wires `electron-updater` to compare the running version with the latest GitHub release per OS, prompt the user before download, and restart the app after the update is fetched.
 - **Linux Packaging Trimmed**: `electron-builder.yml` now outputs only the AppImage format (along with `latest-linux.yml`) to keep releases minimal.
+- **Holiday Highlighting**: `src/renderer/src/pages/CalendarPage.tsx` fetches KR 공휴일 정보를 연도별 캐시로 저장하고 `MonthGrid`에 주입해 주말/휴일 색상과 공휴일 명칭을 노출합니다. `VITE_HOLIDAY_API_URL`과 `VITE_HOLIDAY_COUNTRY`로 API 변경 가능.

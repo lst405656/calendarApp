@@ -8,6 +8,7 @@ import { TransactionFormDialog } from '../components/composite/transaction-form-
 import { getMonthName, getLocalDateString, extractDatePart } from '../lib/date-utils'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { MonthPicker } from '../components/composite/month-picker'
+import { fetchHolidayMap } from '../lib/holiday-api'
 
 export function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date())
@@ -19,6 +20,7 @@ export function CalendarPage() {
   const [sidebarWidth, setSidebarWidth] = useState(400)
   const [isResizing, setIsResizing] = useState(false)
   const [isPickerOpen, setIsPickerOpen] = useState(false)
+  const [holidayCache, setHolidayCache] = useState<Record<number, Record<string, string>>>({})
 
   // Dialog states
   const [eventDialogOpen, setEventDialogOpen] = useState(false)
@@ -32,6 +34,36 @@ export function CalendarPage() {
   useEffect(() => {
     fetchData()
   }, [currentDate])
+
+  useEffect(() => {
+    let cancelled = false
+    if (holidayCache[year]) {
+      return
+    }
+
+    const controller = new AbortController()
+
+    const loadHolidays = async () => {
+      try {
+        const map = await fetchHolidayMap(year, controller.signal)
+        if (cancelled) return
+        setHolidayCache((prev) => ({
+          ...prev,
+          [year]: map
+        }))
+      } catch (error) {
+        if (controller.signal.aborted) return
+        console.error('Failed to fetch holiday data:', error)
+      }
+    }
+
+    loadHolidays()
+
+    return () => {
+      cancelled = true
+      controller.abort()
+    }
+  }, [year, holidayCache])
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -277,6 +309,7 @@ export function CalendarPage() {
                 transactions={transactions}
                 selectedDate={selectedDate}
                 onDateClick={handleDateClick}
+                holidays={holidayCache[year] ?? {}}
               />
             </div>
 
