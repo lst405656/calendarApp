@@ -28,6 +28,8 @@ declare global {
         month: number
       ) => Promise<Array<{ date: string; type: string; total: number }>>
       getRecentTransactions: (limit?: number) => Promise<any[]>
+      getTodayEvents: () => Promise<any[]>
+      getWeeklyCategoryStats: () => Promise<Array<{ category: string; type: 'income' | 'expense'; total: number }>>
     }
   }
 }
