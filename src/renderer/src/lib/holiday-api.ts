@@ -1,8 +1,5 @@
-const DEFAULT_HOLIDAY_ENDPOINT = 'https://date.nager.at/api/v3/PublicHolidays'
-
-const HOLIDAY_API_BASE =
-  import.meta.env.VITE_HOLIDAY_API_URL?.replace(/\/$/, '') ?? DEFAULT_HOLIDAY_ENDPOINT
-const HOLIDAY_COUNTRY = import.meta.env.VITE_HOLIDAY_COUNTRY ?? 'KR'
+const HOLIDAY_API_BASE = 'https://date.nager.at/api/v3/PublicHolidays'
+const HOLIDAY_COUNTRY = 'KR'
 
 interface HolidayApiResponse {
   date: string
