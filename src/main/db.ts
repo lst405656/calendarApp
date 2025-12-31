@@ -13,10 +13,24 @@ export function initDB() {
       title TEXT NOT NULL,
       start_date TEXT NOT NULL,
       end_date TEXT NOT NULL,
+      start_time TEXT,
+      end_time TEXT,
       description TEXT,
       color TEXT
     )
   `)
+
+  // Check if columns exist and add them if not (migration)
+  const tableInfo = db.pragma('table_info(events)') as any[]
+  const hasStartTime = tableInfo.some((col) => col.name === 'start_time')
+  const hasEndTime = tableInfo.some((col) => col.name === 'end_time')
+
+  if (!hasStartTime) {
+    db.exec('ALTER TABLE events ADD COLUMN start_time TEXT')
+  }
+  if (!hasEndTime) {
+    db.exec('ALTER TABLE events ADD COLUMN end_time TEXT')
+  }
 
   db.exec(`
     CREATE TABLE IF NOT EXISTS transactions (
@@ -41,11 +55,13 @@ export function addEvent(event: {
   title: string
   start_date: string
   end_date: string
+  start_time?: string
+  end_time?: string
   description?: string
   color?: string
 }) {
   const stmt = db.prepare(
-    'INSERT INTO events (title, start_date, end_date, description, color) VALUES (@title, @start_date, @end_date, @description, @color)'
+    'INSERT INTO events (title, start_date, end_date, start_time, end_time, description, color) VALUES (@title, @start_date, @end_date, @start_time, @end_time, @description, @color)'
   )
   return stmt.run(event)
 }
@@ -95,12 +111,14 @@ export function updateEvent(
     title: string
     start_date: string
     end_date: string
+    start_time?: string
+    end_time?: string
     description?: string
     color?: string
   }
 ) {
   const stmt = db.prepare(
-    'UPDATE events SET title = @title, start_date = @start_date, end_date = @end_date, description = @description, color = @color WHERE id = @id'
+    'UPDATE events SET title = @title, start_date = @start_date, end_date = @end_date, start_time = @start_time, end_time = @end_time, description = @description, color = @color WHERE id = @id'
   )
   return stmt.run({ id, ...event })
 }
@@ -166,7 +184,7 @@ export function getMonthlyStats(year: number, month: number) {
   const eventCount = (eventStmt.get(startDate, endDate) as { count: number }).count
 
   // Get today's event count
-  const today = new Date().toISOString().split('T')[0]
+  const today = getLocalYMD(new Date())
   const todayEventStmt = db.prepare(`
     SELECT COUNT(*) as count
     FROM events
@@ -215,4 +233,43 @@ export function getRecentTransactions(limit: number = 5) {
   `)
 
   return stmt.all(limit)
+}
+
+export function getTodayEvents() {
+  const today = getLocalYMD(new Date())
+  const stmt = db.prepare('SELECT * FROM events WHERE start_date = ? ORDER BY start_time ASC')
+  return stmt.all(today)
+}
+
+export function getWeeklyCategoryStats() {
+  const today = new Date()
+  const sevenDaysAgo = new Date(today)
+  sevenDaysAgo.setDate(today.getDate() - 6)
+
+  const startDate = getLocalYMD(sevenDaysAgo)
+  const endDate = getLocalYMD(today)
+
+  const stmt = db.prepare(`
+    SELECT 
+      category,
+      type,
+      SUM(amount) as total
+    FROM transactions 
+    WHERE date >= ? AND date <= ?
+    GROUP BY category, type
+    ORDER BY total DESC
+  `)
+
+  return stmt.all(startDate, endDate) as Array<{
+    category: string
+    type: 'income' | 'expense'
+    total: number
+  }>
+}
+
+function getLocalYMD(date: Date): string {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }

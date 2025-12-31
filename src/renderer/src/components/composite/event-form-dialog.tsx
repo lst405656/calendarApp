@@ -14,6 +14,8 @@ interface EventFormDialogProps {
     title: string
     start_date: string
     end_date: string
+    start_time?: string
+    end_time?: string
     description?: string
     color?: string
   }
@@ -42,6 +44,8 @@ export function EventFormDialog({
     event?.start_date || defaultDate || getLocalDateString()
   )
   const [endDate, setEndDate] = useState(event?.end_date || defaultDate || getLocalDateString())
+  const [startTime, setStartTime] = useState(event?.start_time || '')
+  const [endTime, setEndTime] = useState(event?.end_time || '')
   const [description, setDescription] = useState(event?.description || '')
   const [color, setColor] = useState(event?.color || '#3b82f6')
   const [customColor, setCustomColor] = useState('')
@@ -51,6 +55,8 @@ export function EventFormDialog({
       setTitle(event.title)
       setStartDate(event.start_date)
       setEndDate(event.end_date)
+      setStartTime(event.start_time || '')
+      setEndTime(event.end_time || '')
       setDescription(event.description || '')
       setColor(event.color || '#3b82f6')
       setCustomColor(event.color || '')
@@ -58,6 +64,8 @@ export function EventFormDialog({
       setTitle('')
       setStartDate(defaultDate || getLocalDateString())
       setEndDate(defaultDate || getLocalDateString())
+      setStartTime('')
+      setEndTime('')
       setDescription('')
       setColor('#3b82f6')
       setCustomColor('')
@@ -71,6 +79,8 @@ export function EventFormDialog({
       title,
       start_date: startDate,
       end_date: endDate,
+      start_time: startTime || undefined,
+      end_time: endTime || undefined,
       description: description || undefined,
       color
     }
@@ -119,6 +129,28 @@ export function EventFormDialog({
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                   required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="start_time">시작 시간 (선택)</Label>
+                <Input
+                  id="start_time"
+                  type="time"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="end_time">종료 시간 (선택)</Label>
+                <Input
+                  id="end_time"
+                  type="time"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
                 />
               </div>
             </div>

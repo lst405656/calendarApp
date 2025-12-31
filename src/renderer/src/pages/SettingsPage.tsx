@@ -126,26 +126,45 @@ export function SettingsPage() {
               </div>
 
               {/* Color Selection */}
-              <div className="flex flex-wrap gap-2 p-2 bg-gray-50 rounded-lg border border-gray-100">
-                {[
-                  '#ef4444',
-                  '#f97316',
-                  '#f59e0b',
-                  '#10b981',
-                  '#06b6d4',
-                  '#3b82f6',
-                  '#8b5cf6',
-                  '#d946ef',
-                  '#6b7280'
-                ].map((color) => (
-                  <button
-                    key={color}
-                    onClick={() => setSelectedColor(color)}
-                    className={`w-6 h-6 rounded-full border-2 transition-all ${selectedColor === color ? 'border-gray-900 scale-110' : 'border-transparent hover:scale-110'}`}
-                    style={{ backgroundColor: color }}
-                    title={color}
+              <div className="space-y-2">
+                <Label>카테고리 색상</Label>
+                <div className="flex gap-2 items-center p-2 bg-gray-50 rounded-lg border border-gray-100">
+                  <div className="relative">
+                    <Input
+                      type="color"
+                      className="w-10 h-10 p-1 cursor-pointer rounded-md overflow-hidden"
+                      value={selectedColor}
+                      onChange={(e) => setSelectedColor(e.target.value)}
+                    />
+                  </div>
+                  <Input
+                    placeholder="색상 코드 (예: #000000)"
+                    value={selectedColor}
+                    onChange={(e) => setSelectedColor(e.target.value)}
+                    className="flex-1 font-mono uppercase"
+                    maxLength={7}
                   />
-                ))}
+                  <div className="flex gap-1 ml-2">
+                    {[
+                      '#ef4444',
+                      '#f97316',
+                      '#f59e0b',
+                      '#10b981',
+                      '#06b6d4',
+                      '#3b82f6',
+                      '#8b5cf6',
+                      '#d946ef'
+                    ].map((color) => (
+                      <button
+                        key={color}
+                        onClick={() => setSelectedColor(color)}
+                        className={`w-6 h-6 rounded-full border-2 transition-all ${selectedColor === color ? 'border-gray-900 scale-110' : 'border-transparent hover:scale-110'}`}
+                        style={{ backgroundColor: color }}
+                        title={color}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
 

@@ -139,6 +139,12 @@ app.whenReady().then(() => {
   ipcMain.handle('get-recent-transactions', (_, limit?: number) => {
     return db.getRecentTransactions(limit)
   })
+  ipcMain.handle('get-today-events', () => {
+    return db.getTodayEvents()
+  })
+  ipcMain.handle('get-weekly-category-stats', () => {
+    return db.getWeeklyCategoryStats()
+  })
 
   createWindow()
   setupAutoUpdates()

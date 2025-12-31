@@ -18,7 +18,9 @@ const api = {
     ipcRenderer.invoke('get-monthly-stats', year, month),
   getDailyTransactions: (year: number, month: number) =>
     ipcRenderer.invoke('get-daily-transactions', year, month),
-  getRecentTransactions: (limit?: number) => ipcRenderer.invoke('get-recent-transactions', limit)
+  getRecentTransactions: (limit?: number) => ipcRenderer.invoke('get-recent-transactions', limit),
+  getTodayEvents: () => ipcRenderer.invoke('get-today-events'),
+  getWeeklyCategoryStats: () => ipcRenderer.invoke('get-weekly-category-stats')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
